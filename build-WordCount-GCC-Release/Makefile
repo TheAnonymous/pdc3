@@ -12,10 +12,10 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = 
-CFLAGS        = -pipe -march=x86-64 -mtune=generic -O2 -pipe -fstack-protector-strong --param=ssp-buffer-size=4 -Wall -W -fPIE $(DEFINES)
-CXXFLAGS      = -pipe -fopenmp -openmp -std=c++11 -march=x86-64 -mtune=generic -O2 -pipe -fstack-protector-strong --param=ssp-buffer-size=4 -Wall -W -fPIE $(DEFINES)
-INCPATH       = -I/usr/lib/qt/mkspecs/linux-g++ -I../WordCount -I.
+DEFINES       = -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB
+CFLAGS        = -pipe -march=x86-64 -mtune=generic -O2 -pipe -fstack-protector-strong --param=ssp-buffer-size=4 -Wall -W -D_REENTRANT -fPIE $(DEFINES)
+CXXFLAGS      = -pipe -fopenmp -openmp -std=c++11 -march=x86-64 -mtune=generic -O2 -pipe -fstack-protector-strong --param=ssp-buffer-size=4 -Wall -W -D_REENTRANT -fPIE $(DEFINES)
+INCPATH       = -I/usr/lib/qt/mkspecs/linux-g++ -I../WordCount -isystem /usr/include/qt -isystem /usr/include/qt/QtGui -isystem /usr/include/qt/QtCore -I. -I.
 QMAKE         = /usr/bin/qmake-qt5
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -36,7 +36,7 @@ DISTNAME      = WordCount1.0.0
 DISTDIR = /home/jakob/Repositorys/pdc3/WordCount/.tmp/WordCount1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-O1,--sort-common,--as-needed,-z,relro -fopenmp -Wl,-O1
-LIBS          = $(SUBLIBS)  
+LIBS          = $(SUBLIBS) -lQt5Gui -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -170,10 +170,14 @@ DIST          = /usr/lib/qt/mkspecs/features/spec_pre.prf \
 		/usr/lib/qt/mkspecs/features/spec_post.prf \
 		/usr/lib/qt/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/qt/mkspecs/features/default_pre.prf \
-		../WordCount/deployment.pri \
 		/usr/lib/qt/mkspecs/features/resolve_config.prf \
 		/usr/lib/qt/mkspecs/features/default_post.prf \
 		/usr/lib/qt/mkspecs/features/warn_on.prf \
+		/usr/lib/qt/mkspecs/features/qt.prf \
+		/usr/lib/qt/mkspecs/features/resources.prf \
+		/usr/lib/qt/mkspecs/features/moc.prf \
+		/usr/lib/qt/mkspecs/features/unix/opengl.prf \
+		/usr/lib/qt/mkspecs/features/unix/thread.prf \
 		/usr/lib/qt/mkspecs/features/testcase_targets.prf \
 		/usr/lib/qt/mkspecs/features/exceptions.prf \
 		/usr/lib/qt/mkspecs/features/yacc.prf \
@@ -329,15 +333,21 @@ Makefile: ../WordCount/WordCount.pro /usr/lib/qt/mkspecs/linux-g++/qmake.conf /u
 		/usr/lib/qt/mkspecs/features/spec_post.prf \
 		/usr/lib/qt/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/qt/mkspecs/features/default_pre.prf \
-		../WordCount/deployment.pri \
 		/usr/lib/qt/mkspecs/features/resolve_config.prf \
 		/usr/lib/qt/mkspecs/features/default_post.prf \
 		/usr/lib/qt/mkspecs/features/warn_on.prf \
+		/usr/lib/qt/mkspecs/features/qt.prf \
+		/usr/lib/qt/mkspecs/features/resources.prf \
+		/usr/lib/qt/mkspecs/features/moc.prf \
+		/usr/lib/qt/mkspecs/features/unix/opengl.prf \
+		/usr/lib/qt/mkspecs/features/unix/thread.prf \
 		/usr/lib/qt/mkspecs/features/testcase_targets.prf \
 		/usr/lib/qt/mkspecs/features/exceptions.prf \
 		/usr/lib/qt/mkspecs/features/yacc.prf \
 		/usr/lib/qt/mkspecs/features/lex.prf \
-		../WordCount/WordCount.pro
+		../WordCount/WordCount.pro \
+		/usr/lib/libQt5Gui.prl \
+		/usr/lib/libQt5Core.prl
 	$(QMAKE) -spec linux-g++ CONFIG+=c++11-fopenmp -o Makefile ../WordCount/WordCount.pro
 /usr/lib/qt/mkspecs/features/spec_pre.prf:
 /usr/lib/qt/mkspecs/common/shell-unix.conf:
@@ -459,15 +469,21 @@ Makefile: ../WordCount/WordCount.pro /usr/lib/qt/mkspecs/linux-g++/qmake.conf /u
 /usr/lib/qt/mkspecs/features/spec_post.prf:
 /usr/lib/qt/mkspecs/features/exclusive_builds.prf:
 /usr/lib/qt/mkspecs/features/default_pre.prf:
-../WordCount/deployment.pri:
 /usr/lib/qt/mkspecs/features/resolve_config.prf:
 /usr/lib/qt/mkspecs/features/default_post.prf:
 /usr/lib/qt/mkspecs/features/warn_on.prf:
+/usr/lib/qt/mkspecs/features/qt.prf:
+/usr/lib/qt/mkspecs/features/resources.prf:
+/usr/lib/qt/mkspecs/features/moc.prf:
+/usr/lib/qt/mkspecs/features/unix/opengl.prf:
+/usr/lib/qt/mkspecs/features/unix/thread.prf:
 /usr/lib/qt/mkspecs/features/testcase_targets.prf:
 /usr/lib/qt/mkspecs/features/exceptions.prf:
 /usr/lib/qt/mkspecs/features/yacc.prf:
 /usr/lib/qt/mkspecs/features/lex.prf:
 ../WordCount/WordCount.pro:
+/usr/lib/libQt5Gui.prl:
+/usr/lib/libQt5Core.prl:
 qmake: FORCE
 	@$(QMAKE) -spec linux-g++ CONFIG+=c++11-fopenmp -o Makefile ../WordCount/WordCount.pro
 
@@ -482,6 +498,7 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
+	$(COPY_FILE) --parents ../WordCount/main.cpp $(DISTDIR)/
 
 
 clean:compiler_clean 
@@ -496,8 +513,18 @@ distclean: clean
 
 ####### Sub-libraries
 
+mocclean: compiler_moc_header_clean compiler_moc_source_clean
+
+mocables: compiler_moc_header_make_all compiler_moc_source_make_all
+
 check: first
 
+compiler_rcc_make_all:
+compiler_rcc_clean:
+compiler_moc_header_make_all:
+compiler_moc_header_clean:
+compiler_moc_source_make_all:
+compiler_moc_source_clean:
 compiler_yacc_decl_make_all:
 compiler_yacc_decl_clean:
 compiler_yacc_impl_make_all:
@@ -513,19 +540,9 @@ main.o: ../WordCount/main.cpp
 
 ####### Install
 
-install_target: first FORCE
-	@test -d $(INSTALL_ROOT)/opt/WordCount/bin || mkdir -p $(INSTALL_ROOT)/opt/WordCount/bin
-	-$(INSTALL_PROGRAM) "$(QMAKE_TARGET)" "$(INSTALL_ROOT)/opt/WordCount/bin/$(QMAKE_TARGET)"
-	-$(STRIP) "$(INSTALL_ROOT)/opt/WordCount/bin/$(QMAKE_TARGET)"
+install:   FORCE
 
-uninstall_target: FORCE
-	-$(DEL_FILE) "$(INSTALL_ROOT)/opt/WordCount/bin/$(QMAKE_TARGET)"
-	-$(DEL_DIR) $(INSTALL_ROOT)/opt/WordCount/bin/ 
-
-
-install:  install_target  FORCE
-
-uninstall: uninstall_target   FORCE
+uninstall:   FORCE
 
 FORCE:
 
