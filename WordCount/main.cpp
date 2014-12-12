@@ -21,57 +21,80 @@ struct word_info{
 
 int main(int argc, char *argv[])
 {
-	int numThreads = 0;
+	//Initialize
 	int real_numThreads=0;
-	assert(argc == 2);
+	assert(argc == 3);
 	chrono::system_clock::time_point startTime = chrono::system_clock::now();
-
-	string filename( argv[3], argv[3]+1);
-	int threadnum = atoi(argv[2]);
-
+	string filename( argv[2]);
+	int threadnum = atoi(argv[1]);
 	assert( 0 < threadnum );
-
 	int linenumber =0;
 	string line;
 	map<string, word_info> wc;
 	ifstream myfile (filename);
+	vector<string> lines;
+
+	//Read file in vector
 	if (myfile.is_open())
 	{
-	  while ( getline (myfile,line) )
-	  {
-		  linenumber++;
-		//Put code here
-
-
-
-	  }
-	  myfile.close();
+		while ( getline (myfile,line) )
+		{
+			linenumber++;
+			lines.push_back(line);
+		}
+		myfile.close();
 	}
 	else{
 		cout << "Unable to open file";
 		return 0;
 	}
+	omp_set_num_threads(threadnum);
 
-	omp_set_num_threads(numThreads);
-
-	int i, linenumbers;
-	/* Parsing part with openmp */
-
-	#pragma omp parallel for                            \
-		private(i) lastprivate(real_numThreads)
-	for(int i=0; i < linenumbers; i++){
-		/* do parsing stuff*/
+int i;
+string tmp_word;
+	/* do parsing parallel stuff/put code here*/
+#pragma omp parallel for private(i,tmp_word) lastprivate(real_numThreads)
+	for (int i = 0; i < linenumber; i++) {
+		real_numThreads = omp_get_num_threads();
+		bool eof = false;
+		string tmp_line = lines.at(i);
+		size_t word_begin=0;
+		for(size_t i=0;i < tmp_line.size();i++){
+			if(isalpha(tmp_line[i])){
+				; // nothin iterator is between the word
+			}else{
+				int word_length= i - word_begin;
+				if(word_length>0){
+					tmp_word =tmp_line.substr(word_begin, word_length);
+					//cout << tmp_word << endl;
+					if (wc.count(tmp_word) <= 0){
+						word_info tmp;
+						tmp.count = 0;
+						tmp.lines.push_back(i);
+						#pragma omp critical
+						{
+							wc[tmp_word] = tmp;
+						}
+					} else {
+						#pragma omp critical
+						{
+							wc[tmp_word].count += 1;
+							wc[tmp_word].lines.push_back(i);
+						 }
+					}
+				}
+				word_begin = i+1;
+			}
+		}
 	}
 
-
 	chrono::system_clock::time_point endTime = chrono::system_clock::now();
-	chrono::microseconds microRunTime
-		 = chrono::duration_cast<chrono::microseconds>(endTime - startTime);
+	chrono::microseconds microRunTime =
+			chrono::duration_cast<chrono::microseconds>(endTime - startTime);
 	double runTime = microRunTime.count() / 1000000.0;
 
-	cout << std::setprecision( 8 )
-			  << "time " << runTime  << " seconds."
-			  << endl <<flush;
+	cout << std::setprecision(8) << "time " << runTime << " seconds." << endl
+		 << flush;
 	cout << "There were " << real_numThreads << " threads." << endl;
 
 	return 0;
