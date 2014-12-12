@@ -1,0 +1,16 @@
+#include <iostream>
+#include <vector>
+#include <map>
+
+using namespace std;
+
+struct word_info{
+	int count;
+	vector<int> lines;
+}
+int main()
+{
+	
+	return 0;
+}
+
