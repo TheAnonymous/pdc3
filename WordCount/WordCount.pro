@@ -1,12 +1,16 @@
 TEMPLATE = app
 CONFIG += console
-CONFIG -= app_bundle
-CONFIG -= qt
+#CONFIG -= app_bundle
+#CONFIG -= qt
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    main.cpp \
+    main.cpp
+
+#CONFIG += c++11 -fopenmp
 QMAKE_LFLAGS += -fopenmp
-QMAKE_CXXFLAGS += -std=c++0x
+QMAKE_CXXFLAGS += -fopenmp -openmp -std=c++11
+#LIBS += -fopenmp
 
-
-include(deployment.pri)
-qtcAddDeployment()
+#include(deployment.pri)
+#qtcAddDeployment()
