@@ -1,27 +1,56 @@
 #include <iostream>
-#include <omp.h>
 #include <cassert>
 #include <chrono>
 
+#include <vector>
+#include <map>
+#include <fstream>
+#include <string>
+#include <cmath> // for fabs()
+#include <iomanip>
+#include <sstream>
+
+
+#include <omp.h>
 using namespace std;
 
-int main()
+struct word_info{
+	int count;
+	vector<int> lines;
+} word;
+
+int main(int argc, char *argv[])
 {
-
     int numThreads = 0;
+    int real_numThreads=0;
+    assert(argc == 2);
+    chrono::system_clock::time_point startTime = chrono::system_clock::now();
 
-    if ( 3 == argc )
-        numThreads = string2int( argv[ 1 ] );
-    else // if number of args illegal
+    string filename( argv[3], argv[3]+1);
+    int threadnum = atoi(argv[2]);
+
+    assert( 0 < threadnum );
+
+    int linenumber =0;
+    string line;
+    map<string, word_info> wc;
+    ifstream myfile (filename);
+    if (myfile.is_open())
     {
-        std::cerr << "Usage: " << argv[0] << " number-of-threads" << std::endl;
-        return( -1 );
-    }; // end argc check
+      while ( getline (myfile,line) )
+      {
+          linenumber++;
+        //Put code here
 
-    assert( 0 < numThreads );
-    assert( numThreads <= maxNumThreads );
 
-    std::chrono::system_clock::time_point startTime = std::chrono::system_clock::now();
+
+      }
+      myfile.close();
+    }
+    else{
+        cout << "Unable to open file";
+        return 0;
+    }
 
 
     omp_set_num_threads( numThreads );
@@ -36,17 +65,16 @@ int main()
     }
 
 
-    std::chrono::system_clock::time_point endTime = std::chrono::system_clock::now();
-    std::chrono::microseconds microRunTime
-         = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime);
+    chrono::system_clock::time_point endTime = chrono::system_clock::now();
+    chrono::microseconds microRunTime
+         = chrono::duration_cast<chrono::microseconds>(endTime - startTime);
     double runTime = microRunTime.count() / 1000000.0;
 
-    std::cout << std::setprecision( 8 )
+    cout << std::setprecision( 8 )
               << "time " << runTime  << " seconds."
-              << std::endl << std::flush;
-    std::cout << "There were " << real_numThreads << " threads." << std::endl;
+              << endl <<flush;
+    cout << "There were " << real_numThreads << " threads." << endl;
 
-
-
+    return 0;
 }
 
