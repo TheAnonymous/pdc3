@@ -9,8 +9,6 @@
 #include <cmath> // for fabs()
 #include <iomanip>
 #include <sstream>
-
-
 #include <omp.h>
 using namespace std;
 
