@@ -24,7 +24,6 @@ int main(int argc, char *argv[])
 	//Initialize
 	int real_numThreads=0;
 	assert(argc == 3);
-	chrono::system_clock::time_point startTime = chrono::system_clock::now();
 	string filename( argv[2]);
 	int threadnum = atoi(argv[1]);
 	assert( 0 < threadnum );
@@ -48,6 +47,7 @@ int main(int argc, char *argv[])
 		cout << "Unable to open file";
 		return 0;
 	}
+	chrono::system_clock::time_point startTime = chrono::system_clock::now();
 	omp_set_num_threads(threadnum);
 
 int i;
