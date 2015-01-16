@@ -52,7 +52,6 @@ int main(int argc, char *argv[]){
 int i;
 string tmp_word;
 map<string, word_info> wc_local;
-	/* do parsing parallel stuff/put code here*/
 #pragma omp parallel private(i, tmp_word, wc_local)
     {
 #pragma omp for  lastprivate(real_numThreads)
@@ -89,7 +88,7 @@ map<string, word_info> wc_local;
             }
         }
 
-#pragma for
+#pragma omp critical
         for (auto& kv : wc_local) {
             if (wc.count(kv.first) <= 0){
                 word_info tmp;
