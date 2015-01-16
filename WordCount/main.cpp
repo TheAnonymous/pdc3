@@ -71,16 +71,10 @@ map<string, word_info> wc_local;
                             word_info tmp;
                             tmp.count = 1;
                             tmp.lines.push_back(i);
-    //						#pragma omp critical
-    //						{
                                 wc_local[tmp_word] = tmp;
-    //						}
                         } else {
-    //						#pragma omp critical
-    //						{
                                 wc_local[tmp_word].count += 1;
                                 wc_local[tmp_word].lines.push_back(i);
-    //						 }
                         }
                     }
                     word_begin = i+1;
@@ -113,18 +107,18 @@ map<string, word_info> wc_local;
 	cout << "There were " << real_numThreads << " threads." << endl;
     cout << "there where " << wc.size() << " uniq words in this file" << endl;
 
-//    for (auto& kv : wc) {
-//        cout << kv.first;
-//        cout << "\t" << to_string(kv.second.count);
-//        std::stringstream ss;
-//        for(size_t i = 0; i < kv.second.lines.size(); ++i)
-//        {
-//          if(i != 0)
-//            ss << ",";
-//          ss << to_string(kv.second.lines[i]);
-//        }
-//        std::string s = ss.str();
-//        cout << "\t" << s << endl;
-//    }
+    for (auto& kv : wc) {
+        cout << kv.first;
+        cout << "\t" << to_string(kv.second.count);
+        std::stringstream ss;
+        for(size_t i = 0; i < kv.second.lines.size(); ++i)
+        {
+          if(i != 0)
+            ss << ",";
+          ss << to_string(kv.second.lines[i]);
+        }
+        std::string s = ss.str();
+        cout << "\t" << s << endl;
+    }
 	return 0;
 }
