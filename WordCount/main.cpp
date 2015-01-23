@@ -54,7 +54,7 @@ string tmp_word;
 map<string, word_info> wc_local;
 #pragma omp parallel private(i, tmp_word, wc_local)
     {
-#pragma omp for  lastprivate(real_numThreads)
+#pragma omp parallel for lastprivate(real_numThreads)
         for (int i = 0; i < linenumber; i++) {
             real_numThreads = omp_get_num_threads();
             string tmp_line = lines.at(i);
@@ -97,10 +97,10 @@ map<string, word_info> wc_local;
             }
         }
     }
-	chrono::system_clock::time_point endTime = chrono::system_clock::now();
-	chrono::microseconds microRunTime =
-			chrono::duration_cast<chrono::microseconds>(endTime - startTime);
-	double runTime = microRunTime.count() / 1000000.0;
+chrono::system_clock::time_point endTime = chrono::system_clock::now();
+chrono::microseconds microRunTime =
+        chrono::duration_cast<chrono::microseconds>(endTime - startTime);
+double runTime = microRunTime.count() / 1000000.0;
 
     cout << std::setprecision(8) << "time " << runTime << " seconds." << endl
 		 << flush;
