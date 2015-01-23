@@ -52,9 +52,9 @@ int main(int argc, char *argv[]){
 int i;
 string tmp_word;
 map<string, word_info> wc_local;
-#pragma omp parallel private(i, tmp_word, wc_local)
+#pragma omp parallel private(wc_local)
     {
-#pragma omp parallel for lastprivate(real_numThreads)
+#pragma omp parallel for private(i,tmp_word) lastprivate(real_numThreads)
         for (int i = 0; i < linenumber; i++) {
             real_numThreads = omp_get_num_threads();
             string tmp_line = lines.at(i);
