@@ -51,15 +51,13 @@ int main(int argc, char *argv[]){
 
 int i;
 string tmp_word;
-map<string, word_info> wc_local[threadnum];
-int local_threadnum=0;
+map<string, word_info> wc_local;
 
-#pragma omp parallel private(i, tmp_word)
+#pragma omp parallel private(i, tmp_word,wc_local)
     {
-#pragma omp for private(i, tmp_word, local_threadnum) lastprivate(real_numThreads)
+#pragma omp for private(i) lastprivate(real_numThreads)
         for (int i = 0; i < linenumber; i++) {
             real_numThreads = omp_get_num_threads();
-            local_threadnum= omp_get_thread_num();
             string tmp_line = lines.at(i);
             size_t word_begin=0;
             for(size_t i=0;i < tmp_line.size();i++){
@@ -70,36 +68,35 @@ int local_threadnum=0;
                     if(word_length>0){
                         tmp_word =tmp_line.substr(word_begin, word_length);
                         //cout << tmp_word << endl;
-                        if (wc.count(tmp_word) <= 0){
+                        if (wc_local.count(tmp_word) <= 0){
                             word_info tmp;
                             tmp.count = 1;
                             tmp.lines.push_back(i);
-                                wc_local[local_threadnum][tmp_word] = tmp;
+                                wc_local[tmp_word] = tmp;
                         } else {
-                                wc_local[local_threadnum][tmp_word].count += 1;
-                                wc_local[local_threadnum][tmp_word].lines.push_back(i);
+                                wc_local[tmp_word].count += 1;
+                                wc_local[tmp_word].lines.push_back(i);
                         }
                     }
                     word_begin = i+1;
                 }
             }
         }
-    }
-    for(int i=0; i<threadnum;i++){
-        for (auto& kv : wc_local[i]) {
-            if (wc.count(kv.first) <= 0){
-                word_info tmp;
-                word_info word_info_in_thread = kv.second;
-                tmp.count= word_info_in_thread.count;
-                tmp.lines = word_info_in_thread.lines;
-                wc[kv.first] = tmp;
-            }else{
-                word_info word_info_in_thread = kv.second;
-                wc[kv.first].count +=  word_info_in_thread.count;
-                wc[kv.first].lines.insert(wc[kv.first].lines.end(), word_info_in_thread.lines.begin(), word_info_in_thread.lines.end());
-            }
+#pragma omp critical
+    for (auto& kv : wc_local) {
+        if (wc.count(kv.first) <= 0){
+            word_info tmp;
+            word_info word_info_in_thread = kv.second;
+            tmp.count= word_info_in_thread.count;
+            tmp.lines = word_info_in_thread.lines;
+            wc[kv.first] = tmp;
+        }else{
+            word_info word_info_in_thread = kv.second;
+            wc[kv.first].count +=  word_info_in_thread.count;
+            wc[kv.first].lines.insert(wc[kv.first].lines.end(), word_info_in_thread.lines.begin(), word_info_in_thread.lines.end());
         }
     }
+}
 
 
 chrono::system_clock::time_point endTime = chrono::system_clock::now();
@@ -114,7 +111,7 @@ double runTime = microRunTime.count() / 1000000.0;
 
     for (auto& kv : wc) {
         cout << kv.first;
-        cout << "\t" << to_string(kv.second.count);
+        cout << "\t\t" << to_string(kv.second.count);
         std::stringstream ss;
         for(size_t i = 0; i < kv.second.lines.size(); ++i)
         {
@@ -123,7 +120,7 @@ double runTime = microRunTime.count() / 1000000.0;
           ss << to_string(kv.second.lines[i]);
         }
         std::string s = ss.str();
-        cout << "\t" << s << endl;
+        cout << "\t\t" << s << endl;
     }
 	return 0;
 }
