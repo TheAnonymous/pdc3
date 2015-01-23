@@ -82,6 +82,13 @@ map<string, word_info> wc_local;
                 }
             }
         }
+
+
+
+        chrono::system_clock::time_point endTimeSearch = chrono::system_clock::now();
+        chrono::microseconds microRunTime =
+                chrono::duration_cast<chrono::microseconds>(endTimeSearch - startTime);
+        double runTime_search = microRunTime.count() / 1000000.0;
 #pragma omp critical
     for (auto& kv : wc_local) {
         if (wc.count(kv.first) <= 0){
@@ -101,14 +108,14 @@ map<string, word_info> wc_local;
 
 chrono::system_clock::time_point endTime = chrono::system_clock::now();
 chrono::microseconds microRunTime =
-        chrono::duration_cast<chrono::microseconds>(endTime - startTime);
+        chrono::duration_cast<chrono::microseconds>(endTime - runTime_search);
 double runTime = microRunTime.count() / 1000000.0;
 
-    cout << std::setprecision(8) << "time " << runTime << " seconds." << endl
-		 << flush;
-	cout << "There were " << real_numThreads << " threads." << endl;
-    cout << "there where " << wc.size() << " uniq words in this file" << endl;
-
+//    cout << std::setprecision(8) << "time " << runTime << " seconds." << endl
+//		 << flush;
+//	cout << "There were " << real_numThreads << " threads." << endl;
+//    cout << "there where " << wc.size() << " uniq words in this file" << endl;
+    cout << real_numThreads << " " << wc.size() << " " << runTime_search << " " << runTime << endl;
 //    for (auto& kv : wc) {
 //        cout << kv.first;
 //        cout << "\t\t" << to_string(kv.second.count);
