@@ -51,12 +51,15 @@ int main(int argc, char *argv[]){
 
 int i;
 string tmp_word;
-map<string, word_info> wc_local;
+map<string, word_info> wc_local[threadnum];
+int local_threadnum=0;
+
 #pragma omp parallel private(i, tmp_word)
     {
-#pragma omp for private(i, tmp_word,wc_local) lastprivate(real_numThreads)
+#pragma omp for private(i, tmp_word, local_threadnum) lastprivate(real_numThreads)
         for (int i = 0; i < linenumber; i++) {
             real_numThreads = omp_get_num_threads();
+            local_threadnum= omp_get_thread_num();
             string tmp_line = lines.at(i);
             size_t word_begin=0;
             for(size_t i=0;i < tmp_line.size();i++){
@@ -71,19 +74,19 @@ map<string, word_info> wc_local;
                             word_info tmp;
                             tmp.count = 1;
                             tmp.lines.push_back(i);
-                                wc_local[tmp_word] = tmp;
+                                wc_local[local_threadnum][tmp_word] = tmp;
                         } else {
-                                wc_local[tmp_word].count += 1;
-                                wc_local[tmp_word].lines.push_back(i);
+                                wc_local[local_threadnum][tmp_word].count += 1;
+                                wc_local[local_threadnum][tmp_word].lines.push_back(i);
                         }
                     }
                     word_begin = i+1;
                 }
             }
         }
-
-#pragma omp critical
-        for (auto& kv : wc_local) {
+    }
+    for(int i=0; i<threadnum;i++){
+        for (auto& kv : wc_local[i]) {
             if (wc.count(kv.first) <= 0){
                 word_info tmp;
                 word_info word_info_in_thread = kv.second;
@@ -97,6 +100,8 @@ map<string, word_info> wc_local;
             }
         }
     }
+
+
 chrono::system_clock::time_point endTime = chrono::system_clock::now();
 chrono::microseconds microRunTime =
         chrono::duration_cast<chrono::microseconds>(endTime - startTime);
