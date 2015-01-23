@@ -50,7 +50,9 @@ int main(int argc, char *argv[]){
 	omp_set_num_threads(threadnum);
 
 int i;
+double runTime_search;
 string tmp_word;
+chrono::system_clock::time_point endTimeSearch;
 map<string, word_info> wc_local;
 
 #pragma omp parallel private(i, tmp_word,wc_local)
@@ -85,10 +87,10 @@ map<string, word_info> wc_local;
 
 
 
-        chrono::system_clock::time_point endTimeSearch = chrono::system_clock::now();
+        endTimeSearch = chrono::system_clock::now();
         chrono::microseconds microRunTime =
                 chrono::duration_cast<chrono::microseconds>(endTimeSearch - startTime);
-        double runTime_search = microRunTime.count() / 1000000.0;
+        runTime_search = microRunTime.count() / 1000000.0;
 #pragma omp critical
     for (auto& kv : wc_local) {
         if (wc.count(kv.first) <= 0){
