@@ -109,18 +109,18 @@ double runTime = microRunTime.count() / 1000000.0;
 	cout << "There were " << real_numThreads << " threads." << endl;
     cout << "there where " << wc.size() << " uniq words in this file" << endl;
 
-    for (auto& kv : wc) {
-        cout << kv.first;
-        cout << "\t\t" << to_string(kv.second.count);
-        std::stringstream ss;
-        for(size_t i = 0; i < kv.second.lines.size(); ++i)
-        {
-          if(i != 0)
-            ss << ",";
-          ss << to_string(kv.second.lines[i]);
-        }
-        std::string s = ss.str();
-        cout << "\t\t" << s << endl;
-    }
+//    for (auto& kv : wc) {
+//        cout << kv.first;
+//        cout << "\t\t" << to_string(kv.second.count);
+//        std::stringstream ss;
+//        for(size_t i = 0; i < kv.second.lines.size(); ++i)
+//        {
+//          if(i != 0)
+//            ss << ",";
+//          ss << to_string(kv.second.lines[i]);
+//        }
+//        std::string s = ss.str();
+//        cout << "\t\t" << s << endl;
+//    }
 	return 0;
 }
