@@ -109,8 +109,7 @@ map<string, word_info> wc_local;
 
 
 chrono::system_clock::time_point endTime = chrono::system_clock::now();
-chrono::microseconds microRunTime =
-        chrono::duration_cast<chrono::microseconds>(endTime - runTime_search);
+chrono::microseconds microRunTime =chrono::duration_cast<chrono::microseconds>(endTime - endTimeSearch);
 double runTime = microRunTime.count() / 1000000.0;
 
 //    cout << std::setprecision(8) << "time " << runTime << " seconds." << endl
